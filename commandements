@@ -1,0 +1,416 @@
+### Analyse de ta liste "33 Commandements"
+
+**LINUX — 50 COMMANDEMENTS DU MAÎTRE DU SYSTÈME (Version Upgradée)**  
+Relis-les, réécris-les, pratique-les jusqu'à ce qu'ils deviennent naturels. Ajoutés pour plus de solidité : gestion paquets, édition, cron, containers basics (essentiels en 2026).
+
+=== 1) Orientation & Fichiers (savoir se déplacer et voir) ===  
+$ pwd  
+    Afficher le répertoire courant (où je suis).  
+
+$ ls -la  
+    Lister tous les fichiers, avec détails et fichiers cachés.  
+
+$ cd /chemin  
+    Changer de répertoire (se déplacer dans l'arborescence).  
+
+$ mkdir -p /chemin/dossier  
+    Créer un dossier (ou arborescence) s'il n'existe pas.  
+
+$ cp source dest  
+    Copier un fichier (ou dossier avec -r).  
+
+$ mv source dest  
+    Déplacer ou renommer un fichier/dossier.  
+
+$ rm fichier  
+    Supprimer un fichier (avec -r pour un dossier, à manier avec respect).  
+
+$ find / -name 'motif'  
+    Chercher un fichier par nom dans l'arborescence.  
+
+$ grep -R 'mot' /chemin  
+    Rechercher un texte dans des fichiers (analyse de config, logs...).  
+
+$ less fichier  
+    Lire un fichier long page par page (q pour quitter).  
+
+**$ tree -L 2 /chemin**  
+    Afficher l'arborescence en arbre (niveaux limités pour clarté). Utile pour visualiser structures dossiers en un coup d'œil.  
+
+=== 2) Processus & Ressources (qui consomme quoi) ===  
+$ ps aux  
+    Voir tous les processus (utilisateurs + système).  
+
+$ ps aux --sort=-%cpu | head  
+    Top CPU : processus les plus gourmands.  
+
+$ ps aux --sort=-%mem | head  
+    Top RAM : processus les plus gourmands en mémoire.  
+
+$ ps aux --sort=-%cpu | head -n 15  
+    Version encore plus précise.  
+
+$ ps aux --sort=-%cpu | head -n 2 | tail -1  
+    Ou version pour identifier le top CPU process (avant kill).  
+
+$ ps -eo pid,%cpu,%mem,command --sort=-%cpu | head  
+    Version avec format custom.  
+
+$ ADN de UNIX  
+    Do one thing, and do it well.  
+
+$ ps fax  
+    Voir l’arbre complet de processus (comme top mais hiérarchique).  
+
+$ pstree -p  
+    Version “mode hacker réel”.  
+
+$ ps aux | wc -l  
+    Vérifier le nombre total de processus du système.  
+
+$ kill PID  
+    Tuer un processus par son PID.  
+
+$ top  
+    Vue temps réel CPU, RAM, processus (htop si dispo pour plus de confort).  
+
+$ free -h  
+    Voir la RAM et le Swap utilisés et disponibles.  
+
+**$ kill -9 PID**  
+    Tuer forcé un process bloqué (SIGKILL). À utiliser en dernier recours, car pas propre (perte de données possible).  
+
+**$ nice -n 10 commande**  
+    Lancer une commande avec priorité basse (pour ne pas surcharger CPU). Utile en batch jobs.  
+
+=== 3) Disque & Filesystem (ne jamais se faire surprendre) ===  
+$ df -h  
+    Voir l'utilisation des systèmes de fichiers (disques montés).  
+
+$ du -sh /chemin  
+    Voir la taille d'un dossier (résumé).  
+
+$ lsblk -f  
+    Voir disques, partitions, FS et points de montage.  
+
+**$ fdisk -l**  
+    Lister les partitions disques (détails secteurs). Indispensable avant formatage ou resize.  
+
+**$ mount /dev/sda1 /mnt**  
+    Monter un disque/partition manuellement. Pour accès temporaire (ex: recovery).  
+
+=== 4) Réseau (IP, routes, ports, base du combat réseau) ===  
+$ ip a  
+    Afficher les interfaces réseau et leurs adresses IP.  
+
+$ ip r  
+    Afficher la table de routage (chemins vers les réseaux).  
+
+$ ping -c 4 8.8.8.8  
+    Tester la connectivité IP vers Internet.  
+
+$ ss -tulpn  
+    Lister les ports ouverts et les services qui écoutent.  
+
+$ ssh user@hote  
+    Se connecter à une autre machine en SSH.  
+
+**$ traceroute 8.8.8.8**  
+    Voir le chemin des paquets (hops). Debugging réseau lent ou bloqué.  
+
+**$ nmap -sV localhost**  
+    Scanner ports et versions services (local). Base pentest/récon.  
+
+=== 5) Utilisateurs & Permissions (sécurité de base) ===  
+$ who  
+    Voir qui est connecté actuellement.  
+
+$ last | head  
+    Voir les dernières connexions.  
+
+$ id  
+    Voir mon UID, GID, groupes (qui je suis pour le système).  
+
+$ sudo -l  
+    Voir ce que je peux faire en sudo (surface d’escalade).  
+
+$ chmod 640 fichier  
+    Changer les permissions (lecture/écriture/exec).  
+
+$ chown user:group fichier  
+    Changer le propriétaire et le groupe d'un fichier.  
+
+**$ useradd -m user**  
+    Créer un nouvel utilisateur avec home dir. Base admin (avec passwd après).  
+
+**$ passwd user**  
+    Changer mot de passe utilisateur. Sécurité quotidienne.  
+
+=== 6) Logs & Forensics (santé, erreurs, noyau + ce qui a changé) ===  
+$ uname -a  
+    Voir le noyau, l'architecture et quelques infos système.  
+
+$ uptime -p  
+    Voir depuis combien de temps le système tourne.  
+
+$ journalctl -p err -n 20  
+    Voir les 20 dernières erreurs système (systemd).  
+
+$ dmesg | tail -20  
+    Voir les derniers messages du noyau (hardware, drivers...).  
+
+$ find / -mtime -1 2>/dev/null  
+    Lister les fichiers modifiés dans les dernières 24 heures.  
+
+$ tail -n 50 /var/log/syslog  
+    Voir les 50 dernières lignes d’un log système (Debian/Ubuntu).  
+
+**$ journalctl -u service -f**  
+    Suivre en live les logs d'un service. Debugging temps réel.  
+
+**$ logrotate -d /etc/logrotate.conf**  
+    Vérifier rotation logs (pour éviter surcharge disque). Admin pro.  
+
+=== 7) Bonus Admin/Cyber (à connaître tôt ou tard) ===  
+$ tar -czf archive.tar.gz /chemin  
+    Créer une archive compressée (sauvegarde).  
+
+$ scp fichier user@hote:/chemin  
+    Copier un fichier vers une autre machine via SSH.  
+
+$ systemctl status service  
+    Voir l'état d'un service (systemd).  
+
+$ systemctl restart service  
+    Redémarrer proprement un service.  
+
+**$ rsync -avz source/ dest/**  
+    Copier/synchroniser dossiers (local/remote). Meilleur que cp pour backups.  
+
+**$ cronjob exemple: crontab -e puis * * * * * commande**  
+    Planifier tâches (ex: backup hourly). Persistence malware ou automatisation.  
+
+=== 8) Tcpdump (sniffing réseau) ===  
+$ sudo tcpdump -i eth0 icmp  
+    ICMP (ping, erreurs réseau).  
+
+$ sudo tcpdump -i eth0 udp port 53  
+    DNS (activité suspecte, tunneling, exfiltration).  
+
+$ sudo tcpdump -i eth0 port 80 or port 443  
+    HTTP / HTTPS : voir hosts, TLS handshake.  
+
+$ sudo tcpdump -i eth0 host 192.168.1.50  
+    Filtrer par IP source/destination.  
+
+$ sudo tcpdump -i eth0 dst 8.8.8.8  
+    Filtrer une IP sortante suspecte.  
+
+$ sudo tcpdump -i eth0 src 8.8.8.8  
+    Ou seulement entrante.  
+
+$ sudo tcpdump -i eth0 port 22  
+    Filtrer un port précis (ex: SSH).  
+
+$ sudo tcpdump -i eth0 'tcp[tcpflags] & tcp-syn != 0'  
+    Filtrer le trafic TCP avec flags (détection de scans) SYN seulement → Nmap SYN scan.  
+
+$ sudo tcpdump -i eth0 'tcp[tcpflags] & tcp-ack != 0'  
+    SYN + ACK → réponse d’un service.  
+
+$ sudo tcpdump -nn -i eth0 udp port 53  
+    Voir le trafic DNS + IP + port ( -nn = pas de résolution DNS, super utile SOC).  
+
+$ sudo tcpdump -i eth0 -w capture.pcap  
+    Capturer et écrire dans un fichier .pcap pour analyse plus tard dans Wireshark.  
+
+$ sudo tcpdump -r capture.pcap  
+    Lire la capture.  
+
+$ sudo tcpdump -i eth0 -s 0  
+    Capturer tout le trafic (snapshot complet).  
+
+$ sudo tcpdump -i eth0 -c 20  
+    Limiter à 20 paquets.  
+
+$ sudo tcpdump -nnvvXSs 0 -i eth0  
+    -nn=pas de résolution DNS, vv=ultra verbose, X=hexdump (paquet), S=séquence TCP absolue, s0=snapshot complet.  
+
+**$ sudo tcpdump -i any arp**  
+    Capturer trafic ARP (détection spoofing/poisoning). Base forensics réseau.  
+
+=== 9) Réseau Condensé & Logs Rapides ===  
+$ ip -br a  
+    Version condensée de ip a. Vision rapide et propre de toutes les IP (UP/DOWN en un coup d'œil).  
+
+$ ip -br r  
+    Table de routage ultra-compacte : tu vois ta passerelle et interface de sortie immédiatement.  
+
+$ ss -s  
+    Statistiques réseau : combien de connexions TCP actives, states, écoute… utile en pentest et SOC.  
+
+$ ps -ef --forest  
+    Arbre complet des processus. Indispensable pour visualiser les hiérarchies (services, forks, shells).  
+
+$ grep -iR 'error\|fail' /var/log  
+    Trouver instantanément les erreurs dans tous les logs. Arme SOC + forensic.  
+
+$ grep -R "password\|passwd\|secret" / 2>/dev/null  
+    Chasse aux mots de passe en clair. Commande culte des pentesters.  
+
+$ find / -type f -perm -4000 2>/dev/null  
+    Lister tous les SUID (potentielles escalades de privilèges). Armes Red Team fondamentales.  
+
+=== 10) Users & Recon Rapide ===  
+$ cut -d: -f1 /etc/passwd  
+    Lister proprement tous les utilisateurs système (sans bruit).  
+
+$ awk -F: '{print $1, $3, $7}' /etc/passwd  
+    Voir : utilisateur / UID / shell. Détection d’utilisateurs suspects.  
+
+$ ls -l /etc/ | grep shadow  
+    Vérifier l’existence et les permissions du fichier shadow (critique sécurité).  
+
+$ curl -I http://site.com  
+    Prendre juste les headers HTTP (recon web instantanée + debugging).  
+
+$ dig +short A domaine.com  
+    Résolution DNS propre (recon, troubleshooting, OSINT).  
+
+$ iptables -L -n --line-numbers  
+    Voir toutes les règles firewall côté server. Indispensable pour debugging et défense.  
+
+$ lastb | head  
+    Voir les tentatives de connexion échouées. Mini SOC intégré.  
+
+$ history | grep commande  
+    Retrouver tes commandes passées ou repérer ce qu’un autre utilisateur a fait (forensics).  
+
+**$ awk -F: '$3 >= 1000 {print $1}' /etc/passwd | sort**  
+    Lister seulement utilisateurs humains (UID >=1000). Filtre propre pour audits.  
+
+=== 11) Commandes Avancées (niveau professionnel) ===  
+$ lsof -i  
+    Lister les fichiers ouverts liés au réseau (qui parle sur quels ports). Indispensable en SOC + pentest.  
+
+$ lsof /path  
+    Voir quel process utilise un fichier ou dossier. Diagnostic ultime.  
+
+$ strace -p PID  
+    Attacher un process et voir les syscalls. Analyse, debugging, forensic.  
+
+$ tcpdump -i eth0  
+    Sniffer le trafic brut. Arme du Red Team, SOC, réseau.  
+
+$ netstat -plant  
+    Vision complète connexions + PIDs (ancienne mais toujours culte).  
+
+$ watch -n1 'df -h'  
+    Monitoring temps réel du disque. Diagnostic performance.  
+
+$ iostat -xz 1  
+    Analyser les entrées/sorties (I/O). Cœur des performances systèmes.  
+
+$ vmstat 1  
+    Voir l'état de la mémoire, swap, CPU, tâches. Niveau sysadmin avancé.  
+
+$ htop  
+    Analyse temps réel CPU/MEM + tri avancé. Indispensable.  
+
+$ ss -tp  
+    Connexions TCP + nom du process. Recon rapide + investigation.  
+
+$ nc -lvnp 4444  
+    Créer un listener sur un port (outil universel du pentester).  
+
+$ nc target 4444  
+    Connexion brute à un service. Débogage et exploitation simple.  
+
+$ dig ANY domaine.com  
+    Requête DNS avancée. Recon OSINT.  
+
+$ du -ah / | sort -h | tail  
+    Trouver les plus gros fichiers du système. Investigation + debugging.  
+
+$ crontab -l  
+    Voir les tâches planifiées (souvent exploitées en intrusion).  
+
+**$ sar -u 1 5**  
+    Monitoring CPU sur 5 intervalles de 1s. Stats historiques (sysstat package).  
+
+**$ nano fichier**  
+    Éditer un fichier texte simple (débutant-friendly). Pour configs rapides.  
+
+**$ vim fichier**  
+    Éditer avancé (modes, plugins). Pro pour tout (i insert, :wq save/quit).  
+
+=== 12) Commandes Extrêmes (niveau élite) ===  
+$ dmesg --ctime | grep -i error  
+    Erreurs kernel horodatées. Analyse hardware + traces profondes.  
+
+$ auditctl -l  
+    Lister les règles d’audit du kernel (fondamentales en forensic).  
+
+$ ausearch -m avc -ts recent  
+    Chasse aux violations SELinux/AppArmor (haut niveau défensif).  
+
+$ chkrootkit  
+    Détection de rootkits. Niveau défense profonde.  
+
+$ rkhunter --check  
+    Analyse de rootkits, anomalies SUID, hash suspects.  
+
+$ sysctl -a | grep net  
+    Voir les paramètres réseau kernel. Niveau tuning + sécurisation.  
+
+$ iptables -S  
+    Lister les règles firewall brutes. Red Team → pivot ; Blue Team → durcissement.  
+
+$ nft list ruleset  
+    Voir toutes les règles nftables (nouvelles distros). Niveau firewall moderne.  
+
+$ mount | column -t  
+    Voir les montages FS (noexec, nosuid, nodev). Sécurité profonde.  
+
+$ lsmod  
+    Voir les modules kernel chargés (drivers, extensions). Forensic + hardening.  
+
+$ modinfo module  
+    Afficher les détails d’un module kernel.  
+
+$ perf stat ls  
+    Mesurer les syscalls et performance d’une commande. Niveau performance kernel.  
+
+$ systemctl list-unit-files --state=enabled  
+    Voir tous les services actifs et auto-start. Détection malwares persistants.  
+
+$ grep -R "^sudo:" /etc/group  
+    Voir les membres du groupe sudo. Sécurité absolue.  
+
+$ find / -type f -exec md5sum {} \; 2>/dev/null | sort  
+    Hash de tout le système. Forensic ultime (long).  
+
+**$ sysdig -c proc_execs**  
+    Monitoring syscalls live (comme strace mais global). Elite forensics.  
+
+=== 13) Paquets & Containers (essentiels modernes, ajoutés pour 2026) ===  
+**$ apt update && apt upgrade -y**  
+    Mettre à jour paquets (Debian/Ubuntu). Sécurité quotidienne (patches).  
+
+**$ dnf update -y**  
+    Idem pour Fedora/RHEL. Portable cross-distro.  
+
+**$ apt search paquet**  
+    Chercher un paquet à installer. Avant install.  
+
+**$ docker ps**  
+    Lister containers en run. Base cloud/DevOps.  
+
+**$ docker logs container**  
+    Voir logs d'un container. Debugging microservices.  
+
+**$ kubectl get pods**  
+    Lister pods Kubernetes (si cluster). Niveau élite cloud.  
+
+Fin des 50 commandements upgradés.  
+Cette version est encore plus solide : + complète, + moderne, sans perdre l'essence. Si tu gères des serveurs cloud/containers, les ajouts te sauvent. Teste-les sur une VM ! Besoin d'une section spécifique (ex: plus sur Kubernetes) ? Dis-moi. 😄
