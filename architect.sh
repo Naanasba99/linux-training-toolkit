@@ -129,24 +129,43 @@ show_phase2_method() {
     echo "1) SCAN"
     echo "   J'observe l'état réel de la machine grâce à la section affichée."
     echo "   Je ne saute rien. Je lis calmement."
+    echo "   → Qu'est-ce que je vois ?"
     echo
     echo "2) ANALYSE"
-    echo "   Je me demande : Qu'est-ce que je vois ? Est-ce normal ? À quoi ça sert ?"
+    echo "   Je me demande : Qu'est-ce que ça signifie ? Est-ce normal ? À quoi ça sert ?"
     echo "   J'identifie faits → anomalies → patterns."
+    echo "   → Qu'est-ce que ça signifie ?"
     echo
-    echo "3) QUESTION STRATÉGIQUE"
+    echo "3) HYPOTHÈSE"
+    echo "   Je formule une suspicion explicite AVANT d'agir."
+    echo "   « Je pense que ce process est anormal parce que... »"
+    echo "   « Je suspecte une élévation via ce SUID parce que... »"
+    echo "   Sans hypothèse, tu réagis. Avec hypothèse, tu analyses."
+    echo "   → Qu'est-ce que je suspecte et pourquoi ?"
+    echo
+    echo "4) STRATÉGIE"
     echo "   Je pense comme un DEFENDER : « Est-ce cohérent ? Est-ce sécurisé ? »"
-    echo "   Je pense comme un ATTACKER : « Comment j'exploiterais ça si j'étais sur cette machine ? »"
+    echo "   Je pense comme un ATTACKER : « Comment j'exploiterais ça ? »"
+    echo "   Je choisis comment confirmer ou infirmer mon hypothèse."
+    echo "   → Comment je confirme ou j'infirme ?"
     echo
-    echo "4) ACTION"
-    echo "   Je corrige, j'améliore, je teste : chmod, chown, kill, systemctl, inspection de logs, etc."
+    echo "5) ACTION"
+    echo "   J'exécute : chmod, chown, kill, systemctl, inspection de logs, etc."
+    echo "   → J'exécute."
     echo
-    echo "5) VALIDATION"
+    echo "6) VALIDATION"
     echo "   Je relance la commande → je vérifie que ma correction est réelle."
-    echo "   Rien ne compte sauf l'état final de la machine."
+    echo "   Mon hypothèse était-elle juste ? Juste ou fausse, j'apprends."
+    echo "   → Mon hypothèse était-elle correcte ?"
     echo
-    echo "Ce cycle SCAN → ANALYSE → STRATEGIE → ACTION → VALIDATION est le cœur du métier"
-    echo "Admin Linux, Pentester, SOC, Red Team."
+    echo "7) DOCUMENTATION"
+    echo "   J'écris ce qui s'est passé : observation, hypothèse, action, résultat."
+    echo "   Sans trace écrite, l'action n'a pas eu lieu."
+    echo "   Le log architect_challenges.log est ton point de départ."
+    echo "   → J'écris ce qui s'est passé."
+    echo
+    echo "Ce cycle SCAN → ANALYSE → HYPOTHÈSE → STRATÉGIE → ACTION → VALIDATION → DOCUMENTATION"
+    echo "est le cœur du métier : Admin Linux, DFIR, SOC, Red Team."
     echo
 }
 
@@ -313,7 +332,7 @@ run_challenge() {
         esac
 
         echo
-        echo "Rappelle-toi : SCAN → ANALYSE → STRATEGIE → ACTION → VALIDATION."
+        echo "Rappelle-toi : SCAN → ANALYSE → HYPOTHÈSE → STRATÉGIE → ACTION → VALIDATION → DOCUMENTATION."
         echo
         read -r -p "As-tu réussi cet exercice ? (y/n) : " RESULT
         [ -z "$RESULT" ] && RESULT="?"
@@ -548,7 +567,7 @@ section "11. FIN DU SCAN — RÉCAP"
 
 coach "Tu viens de parcourir : identité, CPU/RAM, disques, processus, utilisateurs,"
 coach "logs, réseau, changements récents, paquets, containers et virtualisation."
-coach "Répète ce scan régulièrement et applique SCAN → ANALYSE → STRATEGIE → ACTION → VALIDATION."
+coach "Répète ce scan régulièrement et applique SCAN → ANALYSE → HYPOTHÈSE → STRATÉGIE → ACTION → VALIDATION → DOCUMENTATION."
 echo
 echo -e "${BOLD}${GREEN}🎯 LINUX ARCHITECT : SESSION TERMINÉE${RESET}"
 echo
